@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize-typescript";
 import Id from "../../@shared/domain/value-object/id.value-object";
 import Product from "../domain/product.entity";
-import { ProductModel } from "./product.model";
+import { ProductAdmModel } from "./product.model";
 import ProductRepository from "./product.repository";
 
 describe("ProductRepository test", () => {
@@ -15,7 +15,7 @@ describe("ProductRepository test", () => {
       sync: { force: true },
     });
 
-    await sequelize.addModels([ProductModel]);
+    await sequelize.addModels([ProductAdmModel]);
     await sequelize.sync();
   });
 
@@ -29,13 +29,14 @@ describe("ProductRepository test", () => {
       name: "Product 1",
       description: "Product 1 description",
       purchasePrice: 100,
+      salesPrice: 200,
       stock: 10,
     };
     const product = new Product(productProps);
     const productRepository = new ProductRepository();
     await productRepository.add(product);
 
-    const productDb = await ProductModel.findOne({
+    const productDb = await ProductAdmModel.findOne({
       where: { id: productProps.id.id },
     });
 
@@ -43,17 +44,19 @@ describe("ProductRepository test", () => {
     expect(productProps.name).toEqual(productDb.name);
     expect(productProps.description).toEqual(productDb.description);
     expect(productProps.purchasePrice).toEqual(productDb.purchasePrice);
+    expect(productProps.salesPrice).toEqual(productDb.salesPrice);
     expect(productProps.stock).toEqual(productDb.stock);
   });
 
   it("should find a product", async () => {
     const productRepository = new ProductRepository();
 
-    ProductModel.create({
+    ProductAdmModel.create({
       id: "1",
       name: "Product 1",
       description: "Product 1 description",
       purchasePrice: 100,
+      salesPrice: 200,
       stock: 10,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -65,6 +68,7 @@ describe("ProductRepository test", () => {
     expect(product.name).toEqual("Product 1");
     expect(product.description).toEqual("Product 1 description");
     expect(product.purchasePrice).toEqual(100);
+    expect(product.salesPrice).toEqual(200);
     expect(product.stock).toEqual(10);
   });
 });

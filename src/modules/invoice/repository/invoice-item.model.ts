@@ -17,7 +17,8 @@ import { InvoiceModel } from "./invoice.model"
     price: number
   
     @ForeignKey(() => InvoiceModel)
-    invoice_id: string;
+    @Column({ allowNull: false })
+    declare invoice_id: string;
   
     @BelongsTo(() => InvoiceModel)
     declare invoice: InvoiceModel;

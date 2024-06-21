@@ -36,7 +36,7 @@ describe("Add Client use case unit test", () => {
     expect(result.id).toBeDefined()
     expect(result.name).toEqual(input.name)
     expect(result.email).toEqual(input.email)
-    expect(result.address).toEqual(input.address)
+    expect(result.address).toStrictEqual(input.address)
 
   })
 })

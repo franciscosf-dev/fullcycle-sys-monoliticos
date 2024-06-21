@@ -6,10 +6,14 @@ import Id from "../../@shared/domain/value-object/id.value-object"
 import Address from "../../@shared/domain/value-object/address"
 import InvoiceItem from "../domain/invoice-item.entity"
 import InvoiceRepository from "./invoice.repository"
+import { Umzug } from "umzug"
+import { migrator } from "../../../__tests_api__/config-migrations/migrator"
 
 describe("Invoice Repository test", () => {
 
-    let sequelize: Sequelize
+     let sequelize: Sequelize
+
+    let migration: Umzug<any>;
   
     beforeEach(async () => {
       sequelize = new Sequelize({
@@ -18,13 +22,23 @@ describe("Invoice Repository test", () => {
         logging: false,
         sync: { force: true }
       })
-  
+
       sequelize.addModels([InvoiceModel,InvoiceItemModel])
-      await sequelize.sync()
+      migration = migrator(sequelize)
+      await migration.up()
+  
+      //sequelize.addModels([InvoiceModel,InvoiceItemModel])
+      //await sequelize.sync()
     })
   
     afterEach(async () => {
+      if (!migration || !sequelize) {
+        return 
+      }
+      migration = migrator(sequelize)
+      await migration.down()
       await sequelize.close()
+      //await sequelize.close()
     })
   
     it("should create a invoice", async () => {
@@ -64,7 +78,7 @@ describe("Invoice Repository test", () => {
       expect(invoiceDb.complement).toEqual(invoice.address.complement)
       expect(invoiceDb.city).toEqual(invoice.address.city)
       expect(invoiceDb.state).toEqual(invoice.address.state)
-      expect(invoiceDb.zipcode).toEqual(invoice.address.zipCode)
+      expect(invoiceDb.zipCode).toEqual(invoice.address.zipCode)
       expect(invoiceDb.items.length).toEqual(invoice.items.length)
       expect(invoiceDb.items[0].id).toEqual(invoice.items[0].id.id)
       expect(invoiceDb.items[0].name).toEqual(invoice.items[0].name)
@@ -75,7 +89,7 @@ describe("Invoice Repository test", () => {
       expect(invoiceDb.createdAt).toStrictEqual(invoice.createdAt)
       expect(invoiceDb.updatedAt).toStrictEqual(invoice.updatedAt)
     })
-  
+ 
     it("should find a invoice", async () => {
   
       const invoiceAdd = new Invoice({
@@ -107,10 +121,11 @@ describe("Invoice Repository test", () => {
         complement: invoiceAdd.address.complement,
         city: invoiceAdd.address.city,
         state: invoiceAdd.address.state,
-        zipcode: invoiceAdd.address.zipCode,
+        zipCode: invoiceAdd.address.zipCode,
         items: invoiceAdd.items.map((item)=>({id: item.id.id,
                                           name: item.name,
                                           price: item.price,
+                                          invoice_id: invoiceAdd.id.id,
                                           createdAt: item.createdAt,
                                           updatedAt: item.updatedAt,
                                         })),
@@ -131,7 +146,7 @@ describe("Invoice Repository test", () => {
       expect(result.address.complement).toEqual(invoice.complement)
       expect(result.address.city).toEqual(invoice.city)
       expect(result.address.state).toEqual(invoice.state)
-      expect(result.address.zipCode).toEqual(invoice.zipcode)
+      expect(result.address.zipCode).toEqual(invoice.zipCode)
       expect(result.items.length).toEqual(invoice.items.length)
       expect(result.items[0].id.id).toEqual(invoice.items[0].id)
       expect(result.items[0].name).toEqual(invoice.items[0].name)
@@ -142,5 +157,5 @@ describe("Invoice Repository test", () => {
       expect(result.createdAt).toStrictEqual(invoice.createdAt)
       expect(result.updatedAt).toStrictEqual(invoice.updatedAt)
     })
-      
+     
   })

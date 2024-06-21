@@ -32,7 +32,7 @@ import { InvoiceItemModel } from "./invoice-item.model"
     state: string
   
     @Column({ allowNull: false })
-    zipcode: string
+    zipCode: string
 
     @HasMany(() => InvoiceItemModel)
     declare items: InvoiceItemModel[];

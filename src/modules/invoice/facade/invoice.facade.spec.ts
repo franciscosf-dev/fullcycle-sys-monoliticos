@@ -4,7 +4,6 @@ import { InvoiceItemModel } from "../repository/invoice-item.model"
 import InvoiceRepository from "../repository/invoice.repository"
 import GenerateInvoiceUseCase from "../usecase/generate-invoice/generate-invoice.usecase"
 import InvoideFacade from "./invoice.facade"
-import FindInvoiceUseCase from "../usecase/find-invoice/find-invoice.usecase"
 import InvoiceFacadeFactory from "../factory/invoice.facade.factory"
 
 describe("Client Adm Facade test", () => {
@@ -67,7 +66,7 @@ describe("Client Adm Facade test", () => {
       expect(invoice.complement).toEqual(input.complement)
       expect(invoice.city).toEqual(input.city)
       expect(invoice.state).toEqual(input.state)
-      expect(invoice.zipcode).toEqual(input.zipCode)
+      expect(invoice.zipCode).toEqual(input.zipCode)
       expect(invoice.items.length).toEqual(input.items.length)
       expect(invoice.items[0].id).toEqual(input.items[0].id)
       expect(invoice.items[0].name).toEqual(input.items[0].name)
